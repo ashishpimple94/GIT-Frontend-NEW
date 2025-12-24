@@ -2,15 +2,16 @@ import axios from 'axios';
 
 // Set base URL based on environment
 // Check if we're in production (Vercel) or development
+// Use typeof window check to avoid SSR issues during build
 const isProduction = process.env.NODE_ENV === 'production' || 
-                     window.location.hostname !== 'localhost';
+                     (typeof window !== 'undefined' && window.location.hostname !== 'localhost');
 
 const API_BASE_URL = isProduction
   ? (process.env.REACT_APP_API_URL || 'https://git-grievance-system-backend.onrender.com')
   : ''; // Empty string uses proxy in development
 
-// Log for debugging (remove in production if needed)
-if (isProduction) {
+// Log for debugging (only in browser, not during build)
+if (typeof window !== 'undefined' && isProduction) {
   console.log('API Base URL:', API_BASE_URL);
 }
 

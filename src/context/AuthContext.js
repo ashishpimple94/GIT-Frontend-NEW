@@ -86,7 +86,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('token');
     setToken(null);
     setUser(null);
-    delete axios.defaults.headers.common['Authorization'];
+    // Token is automatically removed from requests via interceptor
   };
 
   return (
