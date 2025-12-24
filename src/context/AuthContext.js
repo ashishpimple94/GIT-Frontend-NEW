@@ -38,15 +38,40 @@ export const AuthProvider = ({ children }) => {
       return { success: true };
     } catch (error) {
       console.error('Login error:', error);
+      console.error('Full error object:', JSON.stringify(error, null, 2));
       console.error('Error details:', {
         message: error.message,
         response: error.response?.data,
         status: error.response?.status,
-        config: error.config?.url
+        statusText: error.response?.statusText,
+        config: {
+          url: error.config?.url,
+          method: error.config?.method,
+          baseURL: error.config?.baseURL
+        },
+        code: error.code,
+        name: error.name
       });
+      
+      // Better error message extraction
+      let errorMessage = 'Login failed. Please check your connection.';
+      
+      if (error.response) {
+        // Server responded with error
+        errorMessage = error.response.data?.message || 
+                      error.response.data?.error || 
+                      `Server error: ${error.response.status} ${error.response.statusText}`;
+      } else if (error.request) {
+        // Request was made but no response
+        errorMessage = 'No response from server. Please check your internet connection.';
+      } else {
+        // Something else happened
+        errorMessage = error.message || errorMessage;
+      }
+      
       return {
         success: false,
-        message: error.response?.data?.message || error.message || 'Login failed. Please check your connection.'
+        message: errorMessage
       };
     }
   };
