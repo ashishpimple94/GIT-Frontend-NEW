@@ -6,13 +6,16 @@ import axios from 'axios';
 const isProduction = process.env.NODE_ENV === 'production' || 
                      (typeof window !== 'undefined' && window.location.hostname !== 'localhost');
 
+// For local development, use localhost:5001 directly (faster)
+// For production, use Render URL
 const API_BASE_URL = isProduction
   ? (process.env.REACT_APP_API_URL || 'https://git-grievance-system-backend.onrender.com')
-  : ''; // Empty string uses proxy in development
+  : 'http://localhost:5001'; // Direct localhost connection for faster local development
 
 // Log for debugging (only in browser, not during build)
-if (typeof window !== 'undefined' && isProduction) {
+if (typeof window !== 'undefined') {
   console.log('API Base URL:', API_BASE_URL);
+  console.log('Environment:', isProduction ? 'Production' : 'Development');
 }
 
 // Create axios instance with base URL
