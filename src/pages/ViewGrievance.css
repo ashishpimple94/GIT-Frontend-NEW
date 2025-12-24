@@ -1,0 +1,136 @@
+.view-grievance {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.grievance-detail {
+  margin-bottom: 30px;
+}
+
+.grievance-detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.grievance-detail-header h1 {
+  font-size: 28px;
+  color: #1f2937;
+  margin: 0;
+}
+
+.grievance-detail-meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  margin-bottom: 30px;
+  padding: 20px;
+  background: #f9fafb;
+  border-radius: 8px;
+}
+
+.meta-item {
+  color: #4b5563;
+}
+
+.meta-item strong {
+  color: #1f2937;
+  margin-right: 8px;
+}
+
+.grievance-description,
+.grievance-resolution {
+  margin-top: 30px;
+}
+
+.grievance-description h3,
+.grievance-resolution h3 {
+  font-size: 20px;
+  margin-bottom: 15px;
+  color: #1f2937;
+}
+
+.grievance-description p,
+.grievance-resolution p {
+  color: #4b5563;
+  line-height: 1.8;
+  white-space: pre-wrap;
+}
+
+.grievance-resolution {
+  padding: 20px;
+  background: #d1fae5;
+  border-left: 4px solid #10b981;
+  border-radius: 6px;
+}
+
+.comments-section h2 {
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #1f2937;
+}
+
+.comments-list {
+  margin-bottom: 30px;
+}
+
+.comment-item {
+  padding: 15px;
+  background: #f9fafb;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+.comment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.comment-header strong {
+  color: #1f2937;
+}
+
+.comment-date {
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.comment-text {
+  color: #4b5563;
+  line-height: 1.6;
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+.no-comments {
+  text-align: center;
+  color: #9ca3af;
+  padding: 40px;
+}
+
+.comment-form {
+  margin-top: 20px;
+}
+
+.comment-form textarea {
+  margin-bottom: 15px;
+}
+
+@media (max-width: 768px) {
+  .grievance-detail-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .grievance-detail-meta {
+    grid-template-columns: 1fr;
+  }
+}
+

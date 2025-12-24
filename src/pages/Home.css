@@ -1,0 +1,144 @@
+.hero-section {
+  background: #ecf0f1;
+  color: #2c3e50;
+  padding: 40px 20px;
+  text-align: center;
+  border-bottom: 2px solid #bdc3c7;
+}
+
+.hero-content h1 {
+  font-size: 28px;
+  margin-bottom: 15px;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.hero-subtitle {
+  font-size: 16px;
+  margin-bottom: 30px;
+  color: #7f8c8d;
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.features-section {
+  padding: 40px 0;
+  display: none; /* Hide features section to match original design */
+}
+
+.section-title {
+  text-align: left;
+  font-size: 18px;
+  margin-bottom: 12px;
+  margin-top: 0;
+  color: #2c3e50;
+  font-weight: 600;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 6px;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 30px;
+}
+
+.feature-card {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+}
+
+.feature-icon {
+  font-size: 48px;
+  color: #667eea;
+  margin-bottom: 20px;
+}
+
+.feature-card h3 {
+  font-size: 24px;
+  margin-bottom: 15px;
+  color: #1f2937;
+}
+
+.feature-card p {
+  color: #6b7280;
+  line-height: 1.6;
+}
+
+.info-section {
+  padding: 10px 0;
+  background-color: #ffffff;
+  margin-top: 10px;
+  border-radius: 0;
+}
+
+.info-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 12px;
+}
+
+.info-card {
+  background: #f8f9fa;
+  padding: 12px;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #dee2e6;
+}
+
+.info-card h3 {
+  font-size: 15px;
+  margin-bottom: 8px;
+  margin-top: 0;
+  color: #2c3e50;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+}
+
+.info-card h3 i {
+  color: #3498db;
+  font-size: 16px;
+}
+
+.info-details p {
+  margin-bottom: 4px;
+  color: #34495e;
+  line-height: 1.4;
+  font-size: 13px;
+}
+
+.info-details strong {
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .hero-content h1 {
+    font-size: 32px;
+  }
+
+  .hero-subtitle {
+    font-size: 16px;
+  }
+
+  .info-cards {
+    grid-template-columns: 1fr;
+  }
+}
+

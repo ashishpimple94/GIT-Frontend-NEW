@@ -1,0 +1,114 @@
+.navbar {
+  background: #2c3e50;
+  color: white;
+  padding: 12px 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  border-bottom: 3px solid #3498db;
+}
+
+.navbar-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.navbar-brand {
+  text-decoration: none;
+  color: white;
+}
+
+.brand-content {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.git-logo {
+  height: 50px;
+  width: auto;
+  object-fit: contain;
+  max-width: 200px;
+}
+
+.brand-text h1 {
+  font-size: 18px;
+  margin: 0;
+  font-weight: 600;
+  color: white;
+}
+
+.brand-text p {
+  font-size: 11px;
+  margin: 2px 0 0 0;
+  opacity: 0.9;
+  color: #ecf0f1;
+}
+
+.navbar-links {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.nav-link {
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 8px 12px;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+  font-size: 14px;
+}
+
+.nav-link:hover {
+  background-color: #34495e;
+  color: #ecf0f1;
+}
+
+.btn-logout {
+  background: #e74c3c;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 4px;
+}
+
+.btn-logout:hover {
+  background: #c0392b;
+}
+
+@media (max-width: 768px) {
+  .navbar-content {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .navbar-links {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .git-logo {
+    height: 40px;
+    max-width: 150px;
+  }
+
+  .brand-text h1 {
+    font-size: 16px;
+  }
+
+  .brand-text p {
+    font-size: 11px;
+  }
+}
+
