@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
+import api from '../config/axios';
 import './MyGrievances.css';
 
 const MyGrievances = () => {
@@ -14,7 +14,7 @@ const MyGrievances = () => {
 
   const fetchGrievances = async () => {
     try {
-      const res = await axios.get('/api/grievances');
+      const res = await api.get('/api/grievances');
       setGrievances(res.data);
     } catch (error) {
       console.error('Error fetching grievances:', error);

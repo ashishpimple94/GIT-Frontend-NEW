@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../config/axios';
 import './ViewGrievance.css';
 
 const ViewGrievance = () => {
@@ -18,7 +18,7 @@ const ViewGrievance = () => {
 
   const fetchGrievance = async () => {
     try {
-      const res = await axios.get(`/api/grievances/${id}`);
+      const res = await api.get(`/api/grievances/${id}`);
       setGrievance(res.data.grievance);
       setComments(res.data.comments || []);
     } catch (error) {
@@ -34,7 +34,7 @@ const ViewGrievance = () => {
 
     setSubmitting(true);
     try {
-      const res = await axios.post(`/api/grievances/${id}/comments`, {
+      const res = await api.post(`/api/grievances/${id}/comments`, {
         comment: newComment
       });
       setComments([...comments, res.data]);

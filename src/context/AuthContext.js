@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../config/axios';
 
 const AuthContext = createContext();
 
@@ -10,7 +10,6 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     if (token) {
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       fetchUser();
     } else {
       setLoading(false);
@@ -19,12 +18,11 @@ export const AuthProvider = ({ children }) => {
 
   const fetchUser = async () => {
     try {
-      const res = await axios.get('/api/auth/me');
+      const res = await api.get('/api/auth/me');
       setUser(res.data);
     } catch (error) {
       localStorage.removeItem('token');
       setToken(null);
-      delete axios.defaults.headers.common['Authorization'];
     } finally {
       setLoading(false);
     }
@@ -32,12 +30,11 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (username, password) => {
     try {
-      const res = await axios.post('/api/auth/login', { username, password });
+      const res = await api.post('/api/auth/login', { username, password });
       const { token: newToken, user: userData } = res.data;
       localStorage.setItem('token', newToken);
       setToken(newToken);
       setUser(userData);
-      axios.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
       return { success: true };
     } catch (error) {
       return {
@@ -49,12 +46,11 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (userData) => {
     try {
-      const res = await axios.post('/api/auth/register', userData);
+      const res = await api.post('/api/auth/register', userData);
       const { token: newToken, user: newUser } = res.data;
       localStorage.setItem('token', newToken);
       setToken(newToken);
       setUser(newUser);
-      axios.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
       return { success: true };
     } catch (error) {
       // Enhanced error handling with field-specific errors

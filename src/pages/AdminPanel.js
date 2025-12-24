@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../config/axios';
 import './AdminPanel.css';
 
 const AdminPanel = () => {
@@ -29,7 +29,7 @@ const AdminPanel = () => {
       if (filters.category) params.append('category', filters.category);
       if (filters.priority) params.append('priority', filters.priority);
 
-      const res = await axios.get(`/api/admin/grievances?${params.toString()}`);
+      const res = await api.get(`/api/admin/grievances?${params.toString()}`);
       setGrievances(res.data);
     } catch (error) {
       console.error('Error fetching grievances:', error);
@@ -40,7 +40,7 @@ const AdminPanel = () => {
 
   const fetchStats = async () => {
     try {
-      const res = await axios.get('/api/admin/stats');
+      const res = await api.get('/api/admin/stats');
       setStats(res.data);
     } catch (error) {
       console.error('Error fetching stats:', error);
@@ -49,7 +49,7 @@ const AdminPanel = () => {
 
   const handleUpdateGrievance = async () => {
     try {
-      await axios.put(`/api/admin/grievances/${selectedGrievance._id}`, updateData);
+      await api.put(`/api/admin/grievances/${selectedGrievance._id}`, updateData);
       fetchGrievances();
       fetchStats();
       setSelectedGrievance(null);

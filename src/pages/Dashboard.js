@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
+import api from '../config/axios';
 import './Dashboard.css';
 
 const Dashboard = () => {
@@ -19,7 +19,7 @@ const Dashboard = () => {
 
   const fetchGrievances = async () => {
     try {
-      const res = await axios.get('/api/grievances');
+      const res = await api.get('/api/grievances');
       
       // Filter out pending grievances for Recent Grievances section
       const nonPendingGrievances = res.data.filter(g => g.status !== 'pending');

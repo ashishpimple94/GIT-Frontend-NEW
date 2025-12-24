@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../config/axios';
 import './Profile.css';
 
 const Profile = () => {
@@ -27,7 +27,7 @@ const Profile = () => {
 
   const fetchProfile = async () => {
     try {
-      const res = await axios.get('/api/users/profile');
+      const res = await api.get('/api/users/profile');
       setUser(res.data);
       setFormData({
         fullName: res.data.fullName || '',
@@ -49,7 +49,7 @@ const Profile = () => {
     setSaving(true);
 
     try {
-      await axios.put('/api/users/profile', formData);
+      await api.put('/api/users/profile', formData);
       setSuccess('Profile updated successfully!');
       fetchProfile();
     } catch (error) {
@@ -77,7 +77,7 @@ const Profile = () => {
     setSaving(true);
 
     try {
-      await axios.put('/api/users/change-password', {
+      await api.put('/api/users/change-password', {
         currentPassword: passwordData.currentPassword,
         newPassword: passwordData.newPassword
       });

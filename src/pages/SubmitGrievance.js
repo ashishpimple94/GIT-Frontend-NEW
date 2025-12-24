@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../config/axios';
 import './SubmitGrievance.css';
 
 const SubmitGrievance = () => {
@@ -36,7 +36,7 @@ const SubmitGrievance = () => {
     setLoading(true);
 
     try {
-      await axios.post('/api/grievances', formData);
+      await api.post('/api/grievances', formData);
       setSuccess('Grievance submitted successfully!');
       setTimeout(() => {
         navigate('/my-grievances');
