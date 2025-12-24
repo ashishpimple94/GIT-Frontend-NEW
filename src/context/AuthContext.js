@@ -37,9 +37,16 @@ export const AuthProvider = ({ children }) => {
       setUser(userData);
       return { success: true };
     } catch (error) {
+      console.error('Login error:', error);
+      console.error('Error details:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+        config: error.config?.url
+      });
       return {
         success: false,
-        message: error.response?.data?.message || 'Login failed'
+        message: error.response?.data?.message || error.message || 'Login failed. Please check your connection.'
       };
     }
   };
@@ -53,9 +60,16 @@ export const AuthProvider = ({ children }) => {
       setUser(newUser);
       return { success: true };
     } catch (error) {
+      console.error('Registration error:', error);
+      console.error('Error details:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+        config: error.config?.url
+      });
       // Enhanced error handling with field-specific errors
       const responseData = error.response?.data || {};
-      const errorMessage = responseData.message || 'Registration failed. Please try again.';
+      const errorMessage = responseData.message || error.message || 'Registration failed. Please check your connection.';
       const errorArray = Array.isArray(responseData.errors) ? responseData.errors : [];
       const field = responseData.field || null;
       

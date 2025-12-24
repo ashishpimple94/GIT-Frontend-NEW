@@ -1,17 +1,26 @@
 import axios from 'axios';
 
 // Set base URL based on environment
-const API_BASE_URL = process.env.REACT_APP_API_URL || 
-  (process.env.NODE_ENV === 'production' 
-    ? 'https://git-grievance-system-backend.onrender.com'
-    : ''); // Empty string uses proxy in development
+// Check if we're in production (Vercel) or development
+const isProduction = process.env.NODE_ENV === 'production' || 
+                     window.location.hostname !== 'localhost';
+
+const API_BASE_URL = isProduction
+  ? (process.env.REACT_APP_API_URL || 'https://git-grievance-system-backend.onrender.com')
+  : ''; // Empty string uses proxy in development
+
+// Log for debugging (remove in production if needed)
+if (isProduction) {
+  console.log('API Base URL:', API_BASE_URL);
+}
 
 // Create axios instance with base URL
 const api = axios.create({
   baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json'
-  }
+  },
+  timeout: 30000 // 30 seconds timeout
 });
 
 // Request interceptor to add auth token
