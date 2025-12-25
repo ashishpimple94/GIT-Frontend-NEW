@@ -38,45 +38,63 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (username, password) => {
     try {
-      const res = await api.post('/api/auth/login', { username, password });
+      // Validate input
+      if (!username || !username.trim()) {
+        return {
+          success: false,
+          message: 'Please enter your username'
+        };
+      }
+      
+      if (!password) {
+        return {
+          success: false,
+          message: 'Please enter your password'
+        };
+      }
+
+      const res = await api.post('/api/auth/login', { 
+        username: username.trim(), 
+        password 
+      });
+      
       const { token: newToken, user: userData } = res.data;
+      
       if (typeof window !== 'undefined') {
         localStorage.setItem('token', newToken);
       }
+      
       setToken(newToken);
       setUser(userData);
+      
       return { success: true };
     } catch (error) {
-      console.error('Login error:', error);
-      console.error('Full error object:', JSON.stringify(error, null, 2));
-      console.error('Error details:', {
-        message: error.message,
-        response: error.response?.data,
-        status: error.response?.status,
-        statusText: error.response?.statusText,
-        config: {
-          url: error.config?.url,
-          method: error.config?.method,
-          baseURL: error.config?.baseURL
-        },
-        code: error.code,
-        name: error.name
-      });
-      
-      // Better error message extraction
-      let errorMessage = 'Login failed. Please check your connection.';
+      // Clean, user-friendly error messages
+      let errorMessage = 'Login failed. Please try again.';
       
       if (error.response) {
         // Server responded with error
-        errorMessage = error.response.data?.message || 
-                      error.response.data?.error || 
-                      `Server error: ${error.response.status} ${error.response.statusText}`;
+        const responseData = error.response.data;
+        
+        if (responseData?.message) {
+          errorMessage = responseData.message;
+        } else if (responseData?.errors && Array.isArray(responseData.errors)) {
+          // Handle validation errors
+          const validationErrors = responseData.errors.map(err => err.msg || err.message).join(', ');
+          errorMessage = validationErrors || 'Please check your input and try again.';
+        } else if (error.response.status === 400) {
+          errorMessage = 'Invalid username or password. Please check your credentials.';
+        } else if (error.response.status === 500) {
+          errorMessage = 'Server error. Please try again in a moment.';
+        } else {
+          errorMessage = `Error: ${error.response.status}. Please try again.`;
+        }
       } else if (error.request) {
         // Request was made but no response
-        errorMessage = 'No response from server. Please check your internet connection.';
-      } else {
+        errorMessage = 'Unable to connect to server. Please check your internet connection.';
+      } else if (error.message) {
         // Something else happened
-        errorMessage = error.message || errorMessage;
+        errorMessage = error.message;
       }
       
       return {

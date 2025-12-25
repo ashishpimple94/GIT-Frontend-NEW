@@ -24,21 +24,36 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    setLoading(true);
-
-    if (!formData.username || !formData.password) {
-      setError('Please fill in all fields');
-      setLoading(false);
+    
+    // Client-side validation
+    if (!formData.username || !formData.username.trim()) {
+      setError('Please enter your username');
       return;
     }
+    
+    if (!formData.password) {
+      setError('Please enter your password');
+      return;
+    }
+    
+    setLoading(true);
 
-    const result = await login(formData.username, formData.password);
-    setLoading(false);
-
-    if (result.success) {
-      navigate('/dashboard');
-    } else {
-      setError(result.message);
+    try {
+      const result = await login(formData.username.trim(), formData.password);
+      
+      if (result.success) {
+        navigate('/dashboard');
+      } else {
+        setError(result.message || 'Login failed. Please check your credentials.');
+      }
+    } catch (error) {
+      // Fallback error handling
+      const errorMsg = error.response?.data?.message || 
+                      error.message || 
+                      'Login failed. Please try again.';
+      setError(errorMsg);
+    } finally {
+      setLoading(false);
     }
   };
 

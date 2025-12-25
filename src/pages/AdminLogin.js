@@ -25,6 +25,18 @@ const AdminLogin = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    
+    // Client-side validation
+    if (!formData.username.trim()) {
+      setError('Please enter your username');
+      return;
+    }
+    
+    if (!formData.password) {
+      setError('Please enter your password');
+      return;
+    }
+    
     setLoading(true);
 
     try {
@@ -32,19 +44,32 @@ const AdminLogin = () => {
       
       if (result.success) {
         // Check if user is admin
-        const res = await api.get('/api/auth/me');
-        if (res.data.userType === 'admin') {
-          navigate('/admin');
-        } else {
-          setError('Access denied. Admin privileges required.');
-          // Logout the user
-          localStorage.removeItem('token');
+        try {
+          const res = await api.get('/api/auth/me');
+          if (res.data.userType === 'admin') {
+            navigate('/admin');
+          } else {
+            setError('Access denied. This account does not have admin privileges.');
+            // Logout the user
+            if (typeof window !== 'undefined') {
+              localStorage.removeItem('token');
+            }
+          }
+        } catch (checkError) {
+          setError('Failed to verify admin access. Please try again.');
+          if (typeof window !== 'undefined') {
+            localStorage.removeItem('token');
+          }
         }
       } else {
-        setError(result.message || 'Login failed');
+        setError(result.message || 'Login failed. Please check your credentials.');
       }
     } catch (error) {
-      setError(error.response?.data?.message || 'Login failed. Please try again.');
+      // Fallback error handling
+      const errorMsg = error.response?.data?.message || 
+                      error.message || 
+                      'Login failed. Please try again.';
+      setError(errorMsg);
     } finally {
       setLoading(false);
     }
