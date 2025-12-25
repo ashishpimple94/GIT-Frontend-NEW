@@ -30,9 +30,12 @@ const api = axios.create({
 // Request interceptor to add auth token
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+    // SSR-safe localStorage access
+    if (typeof window !== 'undefined') {
+      const token = localStorage.getItem('token');
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
     }
     return config;
   },
@@ -47,8 +50,10 @@ api.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       // Unauthorized - clear token and redirect to login
-      localStorage.removeItem('token');
-      window.location.href = '/login';
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('token');
+        window.location.href = '/login';
+      }
     }
     return Promise.reject(error);
   }

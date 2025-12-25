@@ -6,7 +6,13 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [token, setToken] = useState(localStorage.getItem('token'));
+  // SSR-safe localStorage access
+  const [token, setToken] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('token');
+    }
+    return null;
+  });
 
   useEffect(() => {
     if (token) {
@@ -21,7 +27,9 @@ export const AuthProvider = ({ children }) => {
       const res = await api.get('/api/auth/me');
       setUser(res.data);
     } catch (error) {
-      localStorage.removeItem('token');
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('token');
+      }
       setToken(null);
     } finally {
       setLoading(false);
@@ -32,7 +40,9 @@ export const AuthProvider = ({ children }) => {
     try {
       const res = await api.post('/api/auth/login', { username, password });
       const { token: newToken, user: userData } = res.data;
-      localStorage.setItem('token', newToken);
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('token', newToken);
+      }
       setToken(newToken);
       setUser(userData);
       return { success: true };
@@ -80,7 +90,9 @@ export const AuthProvider = ({ children }) => {
     try {
       const res = await api.post('/api/auth/register', userData);
       const { token: newToken, user: newUser } = res.data;
-      localStorage.setItem('token', newToken);
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('token', newToken);
+      }
       setToken(newToken);
       setUser(newUser);
       return { success: true };
@@ -108,7 +120,9 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('token');
+    }
     setToken(null);
     setUser(null);
     // Token is automatically removed from requests via interceptor
