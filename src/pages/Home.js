@@ -20,6 +20,7 @@ const Home = () => {
               <div className="hero-buttons">
                 <Link to="/register" className="btn btn-primary">Register Now</Link>
                 <Link to="/login" className="btn btn-secondary">Sign In</Link>
+                <Link to="/admin/login" className="btn" style={{ background: '#ff6b6b', color: 'white', marginLeft: '10px' }}>Admin Login</Link>
               </div>
             ) : (
               <div className="hero-buttons">

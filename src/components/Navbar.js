@@ -34,6 +34,7 @@ const Navbar = () => {
               <>
                 <Link to="/register" className="nav-link">Register User</Link>
                 <Link to="/login" className="nav-link">Sign In</Link>
+                <Link to="/admin/login" className="nav-link" style={{ color: '#ff6b6b', fontWeight: 'bold' }}>Admin Login</Link>
               </>
             )}
           </div>
