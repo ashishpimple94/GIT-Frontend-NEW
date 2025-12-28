@@ -1,6 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import AuthContext from '../context/AuthContext';
+import CustomSelect from '../components/CustomSelect';
 import './Auth.css';
 
 const Register = () => {
@@ -12,11 +13,11 @@ const Register = () => {
     fullName: '',
     userType: '',
     department: '',
-    contactNumber: ''
+    contactNumber: '',
+    gender: ''
   });
   const [error, setError] = useState('');
-  const [errors, setErrors] = useState([]);
-  const [fieldErrors, setFieldErrors] = useState({});
+  const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const { register } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -27,8 +28,16 @@ const Register = () => {
       [e.target.name]: e.target.value
     });
     setError('');
-    setErrors([]);
-    setFieldErrors({});
+    setErrors({});
+  };
+
+  const handleSelectChange = (name) => (e) => {
+    setFormData({
+      ...formData,
+      [name]: e.target.value
+    });
+    setError('');
+    setErrors({});
   };
 
   const handleSubmit = async (e) => {
@@ -36,7 +45,7 @@ const Register = () => {
     setError('');
     setErrors({});
 
-    if (!formData.username || !formData.email || !formData.password || !formData.fullName || !formData.userType) {
+    if (!formData.username || !formData.email || !formData.password || !formData.fullName || !formData.userType || !formData.gender) {
       setError('Please fill in all required fields');
       return;
     }
@@ -46,57 +55,38 @@ const Register = () => {
       return;
     }
 
-    if (formData.password.length < 4) {
-      setError('Password must be at least 4 characters long');
+    if (formData.password.length < 6) {
+      setError('Password must be at least 6 characters long');
       return;
     }
 
     setLoading(true);
+    setError('');
+    setErrors({});
 
-    const { confirmPassword, ...registerData } = formData;
-    
     try {
+      const { confirmPassword, ...registerData } = formData;
+      console.log('[REGISTER] Submitting registration with data:', { ...registerData, password: '***' });
+      
       const result = await register(registerData);
-      setLoading(false);
-
+      console.log('[REGISTER] Registration result:', result);
+      
       if (result.success) {
+        console.log('[SUCCESS] Registration successful, navigating to dashboard');
         navigate('/dashboard');
       } else {
-        // Handle field-specific errors
-        if (result.field) {
-          if (result.field === 'both') {
-            // If both username and email exist, show error on both fields
-            setFieldErrors({ 
-              username: 'This username is already taken.',
-              email: 'This email is already registered.'
-            });
-            setError('Both username and email are already registered. Please use different credentials or try logging in.');
-          } else {
-            setFieldErrors({ [result.field]: result.message });
-            setError('');
-          }
-          setErrors([]);
-        }
-        // Priority: Show errors array first, then message
-        else if (result.errors && Array.isArray(result.errors) && result.errors.length > 0) {
+        console.error('[ERROR] Registration failed:', result);
+        if (result.errors && Array.isArray(result.errors)) {
           setErrors(result.errors);
-          setError('');
-          setFieldErrors({});
-        } else if (result.message) {
-          setError(result.message);
-          setErrors([]);
-          setFieldErrors({});
         } else {
-          setError('Registration failed. Please try again.');
-          setErrors([]);
-          setFieldErrors({});
+          setError(result.message || 'Registration failed. Please try again.');
         }
       }
     } catch (err) {
-      setLoading(false);
+      console.error('[ERROR] Registration exception:', err);
       setError('An unexpected error occurred. Please try again.');
-      setErrors([]);
-      console.error('Registration error:', err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -141,14 +131,11 @@ const Register = () => {
               type="text"
               id="username"
               name="username"
-              className={`form-control ${fieldErrors.username ? 'error-border' : ''}`}
+              className="form-control"
               value={formData.username}
               onChange={handleChange}
               required
             />
-            {fieldErrors.username && (
-              <small className="field-error">{fieldErrors.username}</small>
-            )}
           </div>
           <div className="form-group">
             <label htmlFor="email">
@@ -158,47 +145,58 @@ const Register = () => {
               type="email"
               id="email"
               name="email"
-              className={`form-control ${fieldErrors.email ? 'error-border' : ''}`}
+              className="form-control"
               value={formData.email}
               onChange={handleChange}
               required
             />
-            {fieldErrors.email && (
-              <small className="field-error">{fieldErrors.email}</small>
-            )}
           </div>
-          <div className="form-group">
-            <label htmlFor="userType">
-              <i className="fas fa-users"></i> User Type *
-            </label>
-            <select
-              id="userType"
-              name="userType"
-              className="form-control"
-              value={formData.userType}
-              onChange={handleChange}
-              required
-            >
-              <option value="">Select User Type</option>
-              <option value="student">Student</option>
-              <option value="staff">Staff</option>
-              <option value="faculty">Faculty</option>
-              <option value="stakeholder">Stakeholder</option>
-            </select>
-          </div>
-          <div className="form-group">
-            <label htmlFor="department">
-              <i className="fas fa-building"></i> Department
-            </label>
-            <input
-              type="text"
-              id="department"
-              name="department"
-              className="form-control"
-              value={formData.department}
-              onChange={handleChange}
-            />
-          </div>
+          <CustomSelect
+            label="Gender"
+            icon="fas fa-venus-mars"
+            placeholder="Select Gender"
+            value={formData.gender}
+            onChange={handleSelectChange('gender')}
+            required={true}
+            options={[
+              { value: 'male', label: 'Male' },
+              { value: 'female', label: 'Female' },
+              { value: 'other', label: 'Other' },
+              { value: 'prefer-not-to-say', label: 'Prefer not to say' }
+            ]}
+          />
+          <CustomSelect
+            label="User Type"
+            icon="fas fa-users"
+            placeholder="Select User Type"
+            value={formData.userType}
+            onChange={handleSelectChange('userType')}
+            required={true}
+            options={[
+              { value: 'student', label: 'Student' },
+              { value: 'staff', label: 'Staff' },
+              { value: 'faculty', label: 'Faculty' },
+              { value: 'stakeholder', label: 'Stakeholder' }
+            ]}
+          />
+          <CustomSelect
+            label="Department"
+            icon="fas fa-building"
+            placeholder="Select Department"
+            value={formData.department}
+            onChange={handleSelectChange('department')}
+            required={false}
+            options={[
+              { value: 'First Year Engineering', label: 'First Year Engineering' },
+              { value: 'Chemical Engineering', label: 'Chemical Engineering' },
+              { value: 'Mechanical Engineering', label: 'Mechanical Engineering' },
+              { value: 'Computer Engineering', label: 'Computer Engineering' },
+              { value: 'E&TC Engineering', label: 'E&TC Engineering' },
+              { value: 'Civil Engineering', label: 'Civil Engineering' },
+              { value: 'CSE AIML Engineering', label: 'CSE AIML Engineering' },
+              { value: 'Others', label: 'Others' }
+            ]}
+          />
           <div className="form-group">
             <label htmlFor="contactNumber">
               <i className="fas fa-phone"></i> Contact Number

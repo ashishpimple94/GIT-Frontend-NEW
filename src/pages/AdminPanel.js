@@ -1,12 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import api from '../config/axios';
 import './AdminPanel.css';
 
 const AdminPanel = () => {
   const [grievances, setGrievances] = useState([]);
   const [stats, setStats] = useState(null);
-  const [usersWithGrievances, setUsersWithGrievances] = useState([]);
-  const [showUsersSection, setShowUsersSection] = useState(false);
   const [filters, setFilters] = useState({
     status: '',
     category: '',
@@ -19,13 +17,7 @@ const AdminPanel = () => {
     resolution: ''
   });
 
-  useEffect(() => {
-    fetchGrievances();
-    fetchStats();
-    fetchUsersWithGrievances();
-  }, [filters]);
-
-  const fetchGrievances = async () => {
+  const fetchGrievances = useCallback(async () => {
     try {
       const params = new URLSearchParams();
       if (filters.status) params.append('status', filters.status);
@@ -39,7 +31,12 @@ const AdminPanel = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [filters]);
+
+  useEffect(() => {
+    fetchGrievances();
+    fetchStats();
+  }, [fetchGrievances]);
 
   const fetchStats = async () => {
     try {
@@ -47,15 +44,6 @@ const AdminPanel = () => {
       setStats(res.data);
     } catch (error) {
       console.error('Error fetching stats:', error);
-    }
-  };
-
-  const fetchUsersWithGrievances = async () => {
-    try {
-      const res = await api.get('/api/admin/users-with-grievances');
-      setUsersWithGrievances(res.data);
-    } catch (error) {
-      console.error('Error fetching users with grievances:', error);
     }
   };
 
@@ -113,70 +101,6 @@ const AdminPanel = () => {
           </div>
         )}
 
-        <div style={{ marginBottom: '20px', display: 'flex', gap: '15px', alignItems: 'center' }}>
-          <button
-            className="btn btn-secondary"
-            onClick={() => setShowUsersSection(!showUsersSection)}
-            style={{ marginLeft: 'auto' }}
-          >
-            {showUsersSection ? 'Hide' : 'Show'} Users Who Submitted Grievances
-          </button>
-        </div>
-
-        {showUsersSection && usersWithGrievances.length > 0 && (
-          <div className="users-section" style={{ 
-            background: 'white', 
-            borderRadius: '12px', 
-            padding: '20px', 
-            marginBottom: '30px',
-            boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
-          }}>
-            <h2 style={{ marginBottom: '20px', color: '#1f2937' }}>Users Who Submitted Grievances</h2>
-            <div style={{ overflowX: 'auto' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                <thead style={{ background: '#f9fafb' }}>
-                  <tr>
-                    <th style={{ padding: '15px', textAlign: 'left', borderBottom: '2px solid #e5e7eb' }}>Name</th>
-                    <th style={{ padding: '15px', textAlign: 'left', borderBottom: '2px solid #e5e7eb' }}>Email</th>
-                    <th style={{ padding: '15px', textAlign: 'left', borderBottom: '2px solid #e5e7eb' }}>Phone</th>
-                    <th style={{ padding: '15px', textAlign: 'left', borderBottom: '2px solid #e5e7eb' }}>Type</th>
-                    <th style={{ padding: '15px', textAlign: 'left', borderBottom: '2px solid #e5e7eb' }}>Department</th>
-                    <th style={{ padding: '15px', textAlign: 'left', borderBottom: '2px solid #e5e7eb' }}>Grievances</th>
-                    <th style={{ padding: '15px', textAlign: 'left', borderBottom: '2px solid #e5e7eb' }}>Last Submitted</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {usersWithGrievances.map((user) => (
-                    <tr key={user.userId} style={{ borderBottom: '1px solid #e5e7eb' }}>
-                      <td style={{ padding: '15px' }}>{user.fullName || user.username}</td>
-                      <td style={{ padding: '15px', color: '#1976d2', fontWeight: 'bold' }}>
-                        {user.email || 'N/A'}
-                      </td>
-                      <td style={{ padding: '15px' }}>{user.contactNumber || 'N/A'}</td>
-                      <td style={{ padding: '15px' }}>{user.userType || 'N/A'}</td>
-                      <td style={{ padding: '15px' }}>{user.department || 'N/A'}</td>
-                      <td style={{ padding: '15px', textAlign: 'center' }}>
-                        <span style={{ 
-                          background: '#dbeafe', 
-                          color: '#1e40af', 
-                          padding: '4px 12px', 
-                          borderRadius: '12px',
-                          fontWeight: '600'
-                        }}>
-                          {user.grievanceCount}
-                        </span>
-                      </td>
-                      <td style={{ padding: '15px' }}>
-                        {new Date(user.latestGrievanceDate).toLocaleDateString()}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        )}
-
         <div className="admin-filters">
           <select
             className="form-control"
@@ -223,8 +147,6 @@ const AdminPanel = () => {
                 <th>ID</th>
                 <th>Subject</th>
                 <th>User</th>
-                <th>Email</th>
-                <th>Phone</th>
                 <th>Category</th>
                 <th>Priority</th>
                 <th>Status</th>
@@ -238,10 +160,6 @@ const AdminPanel = () => {
                   <td>{grievance._id.substring(0, 8)}...</td>
                   <td>{grievance.subject}</td>
                   <td>{grievance.userId?.fullName || grievance.userId?.username}</td>
-                  <td style={{ color: '#1976d2', fontWeight: 'bold' }}>
-                    {grievance.userId?.email || 'N/A'}
-                  </td>
-                  <td>{grievance.userId?.contactNumber || 'N/A'}</td>
                   <td>{grievance.category}</td>
                   <td>
                     <span className={`priority-badge priority-${grievance.priority}`}>

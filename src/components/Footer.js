@@ -34,7 +34,7 @@ const Footer = () => {
         </div>
         <div className="footer-bottom">
           <p>&copy; {new Date().getFullYear()} Gharda Institute Of Technology. All rights reserved.</p>
-          <p>Designed by Amol Salunkhe, GIT</p>
+          <p>Designed Xtendonline Media</p>
         </div>
       </div>
     </footer>

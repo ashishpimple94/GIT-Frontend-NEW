@@ -1,41 +1,19 @@
 import axios from 'axios';
 
-// Set base URL based on environment
-// Check if we're in production (Vercel) or development
-// Use typeof window check to avoid SSR issues during build
-const isProduction = process.env.NODE_ENV === 'production' || 
-                     (typeof window !== 'undefined' && window.location.hostname !== 'localhost');
-
-// For local development, use empty string to use proxy (avoids CORS issues)
-// For production, use Render URL
-const API_BASE_URL = isProduction
-  ? (process.env.REACT_APP_API_URL || 'https://git-grievance-system-backend.onrender.com')
-  : ''; // Empty string uses proxy from package.json (http://localhost:5001)
-
-// Log for debugging (only in browser, not during build)
-if (typeof window !== 'undefined') {
-  console.log('API Base URL:', API_BASE_URL);
-  console.log('Environment:', isProduction ? 'Production' : 'Development');
-}
-
-// Create axios instance with base URL
 const api = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: process.env.REACT_APP_API_URL || 'https://git-backend-new.onrender.com',
+  timeout: 30000, // Increased timeout for production API
   headers: {
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
   },
-  timeout: 30000 // 30 seconds timeout
 });
 
-// Request interceptor to add auth token
+// Add token to requests
 api.interceptors.request.use(
   (config) => {
-    // SSR-safe localStorage access
-    if (typeof window !== 'undefined') {
-      const token = localStorage.getItem('token');
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
@@ -44,14 +22,15 @@ api.interceptors.request.use(
   }
 );
 
-// Response interceptor for error handling
+// Handle 401 errors
 api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // Unauthorized - clear token and redirect to login
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem('token');
+      localStorage.removeItem('token');
+      // Don't redirect on 401 for login/register pages
+      if (!window.location.pathname.includes('/login') && 
+          !window.location.pathname.includes('/register')) {
         window.location.href = '/login';
       }
     }
@@ -60,4 +39,8 @@ api.interceptors.response.use(
 );
 
 export default api;
+
+
+
+
 

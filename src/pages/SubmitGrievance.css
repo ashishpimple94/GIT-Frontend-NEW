@@ -1,21 +1,402 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap');
+
 .submit-grievance {
-  max-width: 800px;
+  max-width: 850px;
   margin: 0 auto;
 }
 
 .submit-grievance h1 {
-  font-size: 32px;
-  margin-bottom: 30px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 38px;
+  font-weight: 700;
+  margin-bottom: 10px;
   color: #1f2937;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.submit-grievance h1::before {
+  content: '\f303';
+  font-family: 'Font Awesome 5 Free';
+  font-weight: 900;
+  font-size: 32px;
+  -webkit-text-fill-color: #1e40af;
+  margin-right: 10px;
+}
+
+.submit-grievance .card {
+  background: white;
+  padding: 30px 35px;
+  border-radius: 20px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  border: 1px solid #f0f0f0;
+}
+
+.submit-grievance .form-group {
+  margin-bottom: 18px;
+}
+
+.submit-grievance .form-group label {
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  color: #374151;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.submit-grievance .form-control {
+  width: 100%;
+  padding: 11px 14px;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  font-size: 14px;
+  font-family: 'Inter', sans-serif;
+  transition: all 0.3s ease;
+  background: #ffffff;
+}
+
+.submit-grievance select.form-control {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M4 6L8 10L12 6' stroke='%23667eea' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 16px;
+  padding-right: 42px;
+  cursor: pointer;
+  font-weight: 500;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.submit-grievance select.form-control:hover {
+  border-color: #1e40af;
+  background-color: #f9fafb;
+  box-shadow: 0 4px 12px rgba(30, 64, 175, 0.12);
+  transform: translateY(-1px);
+}
+
+.submit-grievance select.form-control:active {
+  transform: translateY(0);
+}
+
+.submit-grievance .form-control:focus {
+  outline: none;
+  border-color: #1e40af;
+  box-shadow: 0 0 0 4px rgba(30, 64, 175, 0.15), 0 4px 12px rgba(30, 64, 175, 0.2);
+  background-color: #ffffff;
+}
+
+.submit-grievance select.form-control option {
+  padding: 14px 16px;
+  background: white;
+  color: #1f2937;
+  font-weight: 500;
+  min-height: 44px;
+}
+
+.submit-grievance select.form-control option:hover {
+  background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+  color: #1e40af;
+}
+
+.submit-grievance select.form-control option:checked {
+  background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+  color: white;
+  font-weight: 600;
+}
+
+.submit-grievance select.form-control option:disabled {
+  color: #9ca3af;
+  background: #f3f4f6;
+}
+
+.submit-grievance .form-control::placeholder {
+  color: #9ca3af;
+}
+
+.submit-grievance textarea.form-control {
+  resize: vertical;
+  min-height: 120px;
+  line-height: 1.6;
 }
 
 .form-actions {
   display: flex;
   gap: 15px;
   margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.form-actions .btn {
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 15px;
+  font-family: 'Inter', sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.form-actions .btn-primary {
+  background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.form-actions .btn-primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.form-actions .btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.form-actions .btn-secondary {
+  background: white;
+  color: #6b7280;
+  border: 2px solid #e5e7eb;
+}
+
+.form-actions .btn-secondary:hover {
+  background: #f9fafb;
+  border-color: #d1d5db;
+  transform: translateY(-2px);
+}
+
+/* File Upload Styles */
+.file-upload-wrapper {
+  position: relative;
+  margin-top: 10px;
+}
+
+.file-input {
+  position: absolute;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  overflow: hidden;
+  z-index: -1;
+}
+
+.file-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 25px 20px;
+  border: 2px dashed #4f46e5;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #f9fafb 0%, #ffffff 100%);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+.file-label:hover {
+  border-color: #6366f1;
+  background: linear-gradient(135deg, #f3f4f6 0%, #f9fafb 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+}
+
+.file-label i {
+  font-size: 36px;
+  color: #1e40af;
+  margin-bottom: 10px;
+}
+
+.file-label span {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 6px;
+}
+
+.file-label small {
+  font-size: 12px;
+  color: #6b7280;
+  font-weight: 400;
+}
+
+.file-preview-list {
+  margin-top: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.file-preview-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 11px 14px;
+  background: linear-gradient(135deg, #f9fafb 0%, #ffffff 100%);
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.file-preview-item:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transform: translateX(5px);
+}
+
+.file-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+}
+
+.file-info i {
+  font-size: 24px;
+  color: #1e40af;
+  flex-shrink: 0;
+}
+
+.file-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  flex: 1;
+}
+
+.file-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1f2937;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.file-size {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.file-remove-btn {
+  background: #fee2e2;
+  color: #dc2626;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.file-remove-btn:hover {
+  background: #fecaca;
+  transform: scale(1.1);
+}
+
+.file-remove-btn i {
+  font-size: 14px;
 }
 
 @media (max-width: 768px) {
+  .file-label {
+    padding: 30px 15px;
+  }
+
+  .file-label i {
+    font-size: 36px;
+  }
+
+  .file-label span {
+    font-size: 14px;
+  }
+
+  .file-label small {
+    font-size: 12px;
+  }
+
+  .file-preview-item {
+    padding: 12px;
+  }
+
+  .file-info i {
+    font-size: 20px;
+  }
+
+  .file-name {
+    font-size: 13px;
+  }
+}
+
+.alert {
+  padding: 14px 18px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.alert-error {
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+  color: #991b1b;
+  border: 2px solid #ef4444;
+}
+
+.alert-success {
+  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+  color: #065f46;
+  border: 2px solid #10b981;
+}
+
+.alert i {
+  font-size: 18px;
+}
+
+@media (max-width: 768px) {
+  .submit-grievance h1 {
+    font-size: 28px;
+  }
+
+  .submit-grievance .card {
+    padding: 20px 18px;
+  }
+
+  .submit-grievance .form-group {
+    margin-bottom: 15px;
+  }
+
   .form-actions {
     flex-direction: column;
   }

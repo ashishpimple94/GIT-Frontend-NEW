@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../config/axios';
 import './ViewGrievance.css';
@@ -12,11 +12,7 @@ const ViewGrievance = () => {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
 
-  useEffect(() => {
-    fetchGrievance();
-  }, [id]);
-
-  const fetchGrievance = async () => {
+  const fetchGrievance = useCallback(async () => {
     try {
       const res = await api.get(`/api/grievances/${id}`);
       setGrievance(res.data.grievance);
@@ -26,7 +22,11 @@ const ViewGrievance = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
+
+  useEffect(() => {
+    fetchGrievance();
+  }, [fetchGrievance]);
 
   const handleSubmitComment = async (e) => {
     e.preventDefault();
@@ -110,6 +110,29 @@ const ViewGrievance = () => {
             <div className="grievance-resolution">
               <h3>Resolution</h3>
               <p>{grievance.resolution}</p>
+            </div>
+          )}
+
+          {grievance.attachments && grievance.attachments.length > 0 && (
+            <div className="grievance-attachments">
+              <h3>
+                <i className="fas fa-paperclip"></i> Attachments ({grievance.attachments.length})
+              </h3>
+              <div className="attachments-list">
+                {grievance.attachments.map((attachment, index) => (
+                  <a
+                    key={index}
+                    href={`${process.env.REACT_APP_API_URL || 'https://git-backend-new.onrender.com'}/uploads/${attachment.filePath}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="attachment-link"
+                  >
+                    <i className="fas fa-file"></i>
+                    <span>{attachment.fileName}</span>
+                    <i className="fas fa-external-link-alt"></i>
+                  </a>
+                ))}
+              </div>
             </div>
           )}
         </div>

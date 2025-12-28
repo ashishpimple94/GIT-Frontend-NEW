@@ -54,6 +54,12 @@ const MyGrievances = () => {
           All ({grievances.length})
         </button>
         <button
+          className={`filter-tab ${filter === 'pending' ? 'active' : ''}`}
+          onClick={() => setFilter('pending')}
+        >
+          Pending ({grievances.filter(g => g.status === 'pending').length})
+        </button>
+        <button
           className={`filter-tab ${filter === 'in_progress' ? 'active' : ''}`}
           onClick={() => setFilter('in_progress')}
         >

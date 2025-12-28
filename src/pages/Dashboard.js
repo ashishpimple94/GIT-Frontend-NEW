@@ -12,6 +12,7 @@ const Dashboard = () => {
     total: 0
   });
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     fetchGrievances();
@@ -19,11 +20,11 @@ const Dashboard = () => {
 
   const fetchGrievances = async () => {
     try {
+      console.log('📡 Fetching grievances...');
       const res = await api.get('/api/grievances');
+      console.log('[SUCCESS] Grievances fetched successfully:', res.data.length);
       
-      // Filter out pending grievances for Recent Grievances section
-      const nonPendingGrievances = res.data.filter(g => g.status !== 'pending');
-      setGrievances(nonPendingGrievances.slice(0, 10));
+      setGrievances(res.data.slice(0, 10));
       
       // Calculate stats
       const statsData = {
@@ -34,7 +35,33 @@ const Dashboard = () => {
       };
       setStats(statsData);
     } catch (error) {
-      console.error('Error fetching grievances:', error);
+      console.error('❌ Error fetching grievances:', error);
+      console.error('❌ Error message:', error.message);
+      console.error('❌ Error response:', error.response?.data);
+      console.error('❌ Error status:', error.response?.status);
+      console.error('❌ Error code:', error.code);
+      
+      // Set empty state on error
+      setGrievances([]);
+      setStats({
+        pending: 0,
+        inProgress: 0,
+        resolved: 0,
+        total: 0
+      });
+      
+      // Show user-friendly error
+      if (error.response?.status === 401) {
+        setError('Session expired. Please login again.');
+        console.error('❌ Unauthorized - Token may be invalid or expired');
+      } else if (error.code === 'ECONNREFUSED' || error.message.includes('Network Error')) {
+        setError('Cannot connect to server. Please check your internet connection and try again.');
+        console.error('❌ Cannot connect to server. Please check your internet connection.');
+      } else {
+        const errorMsg = error.response?.data?.message || error.message || 'Failed to fetch grievances';
+        setError(errorMsg);
+        console.error('❌ Failed to fetch grievances:', errorMsg);
+      }
     } finally {
       setLoading(false);
     }
@@ -56,6 +83,17 @@ const Dashboard = () => {
         <h1>Dashboard</h1>
         <p>Welcome! Track and manage your grievances here.</p>
       </div>
+
+      {error && (
+        <div className="alert alert-error" style={{ marginBottom: '20px' }}>
+          <i className="fas fa-exclamation-circle"></i> {error}
+          {error.includes('Session expired') && (
+            <div style={{ marginTop: '10px' }}>
+              <a href="/login" className="btn btn-primary btn-sm">Login Again</a>
+            </div>
+          )}
+        </div>
+      )}
 
       <div className="stats-grid">
         <div className="stat-card stat-pending">

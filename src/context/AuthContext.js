@@ -6,13 +6,7 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  // SSR-safe localStorage access
-  const [token, setToken] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('token');
-    }
-    return null;
-  });
+  const [token, setToken] = useState(localStorage.getItem('token'));
 
   useEffect(() => {
     if (token) {
@@ -27,9 +21,8 @@ export const AuthProvider = ({ children }) => {
       const res = await api.get('/api/auth/me');
       setUser(res.data);
     } catch (error) {
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem('token');
-      }
+      console.error('Error fetching user:', error);
+      localStorage.removeItem('token');
       setToken(null);
     } finally {
       setLoading(false);
@@ -38,112 +31,100 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (username, password) => {
     try {
-      // Validate input
-      if (!username || !username.trim()) {
-        return {
-          success: false,
-          message: 'Please enter your username'
-        };
-      }
-      
-      if (!password) {
-        return {
-          success: false,
-          message: 'Please enter your password'
-        };
-      }
-
-      const res = await api.post('/api/auth/login', { 
-        username: username.trim(), 
-        password 
-      });
+      console.log('Attempting login with username:', username);
+      const res = await api.post('/api/auth/login', { username, password });
+      console.log('Login response:', res.data);
       
       const { token: newToken, user: userData } = res.data;
       
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('token', newToken);
+      if (!userData) {
+        return {
+          success: false,
+          message: 'Invalid response from server'
+        };
       }
       
+      localStorage.setItem('token', newToken);
       setToken(newToken);
       setUser(userData);
-      
       return { success: true };
     } catch (error) {
-      // Clean, user-friendly error messages
-      let errorMessage = 'Login failed. Please try again.';
+      console.error('Login error:', error);
+      console.error('Error response:', error.response?.data);
+      console.error('Error message:', error.message);
       
-      if (error.response) {
-        // Server responded with error
-        const responseData = error.response.data;
-        
-        if (responseData?.message) {
-          errorMessage = responseData.message;
-        } else if (responseData?.errors && Array.isArray(responseData.errors)) {
-          // Handle validation errors
-          const validationErrors = responseData.errors.map(err => err.msg || err.message).join(', ');
-          errorMessage = validationErrors || 'Please check your input and try again.';
-        } else if (error.response.status === 400) {
-          errorMessage = 'Invalid username or password. Please check your credentials.';
-        } else if (error.response.status === 500) {
-          errorMessage = 'Server error. Please try again in a moment.';
-        } else {
-          errorMessage = `Error: ${error.response.status}. Please try again.`;
-        }
-      } else if (error.request) {
-        // Request was made but no response
-        errorMessage = 'Unable to connect to server. Please check your internet connection.';
-      } else if (error.message) {
-        // Something else happened
-        errorMessage = error.message;
+      if (error.code === 'ECONNREFUSED' || error.message.includes('Network Error')) {
+        return {
+          success: false,
+          message: 'Cannot connect to server. Please check your internet connection and try again.'
+        };
       }
       
       return {
         success: false,
-        message: errorMessage
+        message: error.response?.data?.message || error.message || 'Login failed. Please check your credentials.'
       };
     }
   };
 
   const register = async (userData) => {
     try {
+      console.log('[REGISTER] Registration attempt started');
+      console.log('[REGISTER] User data:', { ...userData, password: '***' });
+      
       const res = await api.post('/api/auth/register', userData);
+      console.log('[SUCCESS] Registration response:', res.data);
+      
       const { token: newToken, user: newUser } = res.data;
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('token', newToken);
+      
+      if (!newToken || !newUser) {
+        console.error('[ERROR] Invalid response from server - missing token or user');
+        return {
+          success: false,
+          message: 'Invalid response from server. Please try again.'
+        };
       }
+      
+      localStorage.setItem('token', newToken);
       setToken(newToken);
       setUser(newUser);
+      console.log('[SUCCESS] Registration successful, user logged in');
       return { success: true };
     } catch (error) {
-      console.error('Registration error:', error);
-      console.error('Error details:', {
-        message: error.message,
-        response: error.response?.data,
-        status: error.response?.status,
-        config: error.config?.url
-      });
-      // Enhanced error handling with field-specific errors
-      const responseData = error.response?.data || {};
-      const errorMessage = responseData.message || error.message || 'Registration failed. Please check your connection.';
-      const errorArray = Array.isArray(responseData.errors) ? responseData.errors : [];
-      const field = responseData.field || null;
+      console.error('[ERROR] Registration error:', error);
+      console.error('[ERROR] Error response:', error.response?.data);
+      console.error('[ERROR] Error message:', error.message);
+      console.error('[ERROR] Error code:', error.code);
+      
+      if (error.code === 'ECONNREFUSED' || error.message.includes('Network Error')) {
+        return {
+          success: false,
+          message: 'Cannot connect to server. Please check your internet connection and try again.'
+        };
+      }
+      
+      // Handle validation errors
+      if (error.response?.data?.errors && Array.isArray(error.response.data.errors)) {
+        return {
+          success: false,
+          message: 'Please fix the following errors:',
+          errors: error.response.data.errors
+        };
+      }
       
       return {
         success: false,
-        message: errorMessage,
-        errors: errorArray,
-        field: field
+        message: error.response?.data?.message || error.message || 'Registration failed. Please try again.',
+        errors: error.response?.data?.errors
       };
     }
   };
 
   const logout = () => {
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('token');
-    }
+    localStorage.removeItem('token');
     setToken(null);
     setUser(null);
-    // Token is automatically removed from requests via interceptor
+    // Token removal is handled by the axios interceptor
   };
 
   return (
