@@ -109,14 +109,24 @@ const SubmitGrievance = () => {
         formDataToSend.append('attachments', file);
       });
 
+      console.log('[SUBMIT] Sending grievance to API:', {
+        subject: formData.subject,
+        category: formData.category,
+        priority: formData.priority,
+        filesCount: files.length,
+        descriptionLength: formData.description.length
+      });
+      
       const res = await api.post('/api/grievances', formDataToSend, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
       });
       
-      console.log('Grievance submitted successfully:', res.data);
-      setSuccess('Grievance submitted successfully!');
+      console.log('[SUBMIT] ✅ Grievance submitted successfully:', res.data);
+      console.log('[SUBMIT] Grievance ID:', res.data._id);
+      console.log('[SUBMIT] ⚠️ Note: Confirmation email should be sent to your registered email address');
+      setSuccess('Grievance submitted successfully! An email confirmation will be sent to your registered email.');
       setTimeout(() => {
         navigate('/my-grievances');
       }, 1500);

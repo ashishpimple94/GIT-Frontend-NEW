@@ -19,7 +19,17 @@ api.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+    
+    // Don't override Content-Type if it's already set (for FormData)
+    if (config.headers['Content-Type'] === 'multipart/form-data') {
+      delete config.headers['Content-Type']; // Let axios set it automatically with boundary
+    }
+    
     console.log('[API] Request:', config.method?.toUpperCase(), config.url);
+    console.log('[API] Headers:', {
+      'Content-Type': config.headers['Content-Type'] || 'auto (FormData)',
+      'Authorization': config.headers.Authorization ? 'Bearer ***' : 'none'
+    });
     return config;
   },
   (error) => {
