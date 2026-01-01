@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://git-backend-new-4gds.onrender.com';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://git-backend-new-1.onrender.com';
 
 console.log('[API] Base URL configured:', API_BASE_URL);
 

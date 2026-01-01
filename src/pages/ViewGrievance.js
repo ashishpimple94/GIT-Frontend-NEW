@@ -122,7 +122,7 @@ const ViewGrievance = () => {
                 {grievance.attachments.map((attachment, index) => (
                   <a
                     key={index}
-                    href={`${process.env.REACT_APP_API_URL || 'https://git-backend-new-4gds.onrender.com'}/uploads/${attachment.filePath}`}
+                    href={`${process.env.REACT_APP_API_URL || 'https://git-backend-new-1.onrender.com'}/uploads/${attachment.filePath}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="attachment-link"
