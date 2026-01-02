@@ -14,7 +14,6 @@ import SubmitGrievance from './pages/SubmitGrievance';
 import MyGrievances from './pages/MyGrievances';
 import ViewGrievance from './pages/ViewGrievance';
 import Profile from './pages/Profile';
-import AdminPanel from './pages/AdminPanel';
 import GeneralInfo from './pages/GeneralInfo';
 import './App.css';
 
@@ -74,14 +73,6 @@ function App() {
                 element={
                   <PrivateRoute>
                     <Profile />
-                  </PrivateRoute>
-                }
-              />
-              <Route
-                path="/admin"
-                element={
-                  <PrivateRoute adminOnly>
-                    <AdminPanel />
                   </PrivateRoute>
                 }
               />
